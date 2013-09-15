@@ -1,4 +1,4 @@
-var port = process.env.PORT || 5000;
+var port = 5000;
 var io = require('socket.io').listen(port);
 // assuming io is the Socket.IO server object
 io.configure(function () { 
