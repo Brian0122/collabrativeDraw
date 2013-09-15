@@ -1,5 +1,29 @@
-console.log(process.env.PORT);
-console.log('!!!!!!');
+var express = require("express");
+var app = express();
+var fs = require('fs');
+app.use(express.logger());
+
+app.get('/', function(request, response) {
+  handler(request, response);
+});
+
+var port = process.env.PORT || 5000;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
+
+function handler (req, res) { 
+ fs.readFile(__dirname + '/canvas.html', function (err, data) {
+     if (err) { 
+                res.writeHead(500);
+         return res.end('Error loading chat.html'); 
+            }
+     res.writeHead(200);
+     res.end(data); 
+        });
+}
+
+
 var io = require('socket.io').listen(process.env.PORT || 5000);
 // assuming io is the Socket.IO server object
 io.configure(function () { 
