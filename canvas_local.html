@@ -3,11 +3,11 @@
 
 <head>
 	<script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
-  <!--
-  <script src="http://localhost:8000/socket.io/socket.io.js"></script>
-  -->
+  
+  <script src="http://localhost:5000/socket.io/socket.io.js"></script>
 
-<script src="/socket.io/socket.io.js"></script>
+
+
 
   <style type="text/css">
   	#sketchPad {
@@ -29,7 +29,7 @@
   </style>
 	
 	<script type="text/javascript">
-  var socket = io.connect('http://draw-remote.herokuapp.com');  
+  var socket = io.connect('http://localhost:5000');  
  
 $(function() {
    //產生不同顏色的div方格當作調色盤選項
@@ -55,10 +55,11 @@ $(function() {
     $(this).addClass('active');
     color = this.style.backgroundColor;
   });
-
+	var $canvas = $("#sketchPad");
+  // Generate an unique ID
   var id = Math.round($.now()*Math.random());
   var clients = {};
-	var $canvas = $("#sketchPad");
+
             var ctx = $canvas[0].getContext("2d");
             ctx.lineCap = "round";
             ctx.fillStyle = "white"; //整個canvas塗上白色背景避免PNG的透明底色效果
@@ -72,7 +73,7 @@ $(function() {
                 var x = e.pageX - $canvas.position().left; 
                 var y = e.pageY - $canvas.position().top;
                 ctx.moveTo(x, y);
-                socket.emit('draw', {'eventType':e.type, 'strokeStyle' : 'green', 'lineWidth':3 , 'x' : x, 'y':y,'id':id});
+                socket.emit('draw', {'eventType':e.type, 'strokeStyle' : 'green', 'lineWidth':3 , 'x' : x, 'y':y, 'id':id});
             })
             .mousemove(function (e) {
                 if (drawMode) {
@@ -96,7 +97,7 @@ $(function() {
 
   function clientDraw(data) {
     clients[data.id] = data;
-      if (clients[data.id]) {
+    if (clients[data.id]) {
       var eventType = data.eventType;
       ctx.strokeStyle = data.strokeStyle;
       ctx.lineWidth = data.lineWidth;
