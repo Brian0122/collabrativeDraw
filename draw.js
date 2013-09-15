@@ -1,7 +1,6 @@
 var express = require("express");
-var app = express();
+var app = express.createServer(express.logger());
 var fs = require('fs');
-app.use(express.logger());
 
 app.get('/', function(request, response) {
   handler(request, response);
@@ -24,7 +23,7 @@ function handler (req, res) {
 }
 
 
-var io = require('socket.io').listen(process.env.PORT || 5000);
+var io = require('socket.io').listen(app);
 // assuming io is the Socket.IO server object
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
