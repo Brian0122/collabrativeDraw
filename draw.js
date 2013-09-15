@@ -1,4 +1,4 @@
-var io = require('socket.io').listen(8000);
+var io = require('socket.io').listen();
 // assuming io is the Socket.IO server object
 io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
