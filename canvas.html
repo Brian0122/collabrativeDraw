@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+  <script src="http://localhost:8000/socket.io/socket.io.js"></script>
+  <style type="text/css">
+  	#sketchPad {
+  		width: 500px;
+  		height: 500px;
+  		border: 2px solid gray;
+  	}
+    
+    .option
+    {
+        float: left; width: 20px; height: 20px; border: 2px solid #cccccc;
+        margin-right: 4px; margin-bottom: 4px;
+    }
+    .active { border: 2px solid black; }
+    .lw { text-align: center; vertical-align: middle; }
+    .clearBoth {
+      clear: both;
+    }
+  </style>
+	
+	<script type="text/javascript">
+  var socket = io.connect('http://localhost:8000');  
+ 
+$(function() {
+   //產生不同顏色的div方格當作調色盤選項
+    var colors =
+    "red;orange;yellow;green;blue;indigo;purple;black;white".split(';');
+    var sb = [];
+    $.each(colors, function (i, v) {
+        sb.push("<div class='option' style='background-color:" + v + "'></div>");
+    });
+    sb.push("<div class='clearBoth'></div>");
+    $("#dPallete").html(sb.join("\n"));
+    //產生不同尺寸的方格當作線條粗細選項
+    sb = [];
+    for (var i = 1; i <= 9; i++)
+        sb.push("<div class='option lw'>" +
+ "<div style='margin-top:#px;margin-left:#px;width:%px;height:%px'></div></div>"
+        .replace(/%/g, i).replace(/#/g, 10 - i / 2));
+    $("#dLine").html(sb.join('\n'));
+
+  var color = 'red';
+  $('.option').click(function(){
+    $("#dPallete .option").removeClass('active');
+    $(this).addClass('active');
+    color = this.style.backgroundColor;
+  });
+	var $canvas = $("#sketchPad");
+            var ctx = $canvas[0].getContext("2d");
+            ctx.lineCap = "round";
+            ctx.fillStyle = "white"; //整個canvas塗上白色背景避免PNG的透明底色效果
+            ctx.fillRect(0, 0, $canvas.width(), $canvas.height());
+            var drawMode = false;
+            //canvas點選、移動、放開按鍵事件時進行繪圖動作
+            $canvas.mousedown(function (e) {
+                //ctx.moveTo(e.pageX - $canvas.position().left, e.pageY - $canvas.position().top);
+                drawMode = true;
+                ctx.beginPath();
+                var x = e.pageX - $canvas.position().left; 
+                var y = e.pageY - $canvas.position().top;
+                ctx.moveTo(x, y);
+                socket.emit('draw', {'eventType':e.type, 'strokeStyle' : 'green', 'lineWidth':3 , 'x' : x, 'y':y});
+            })
+            .mousemove(function (e) {
+                if (drawMode) {
+                    ctx.strokeStyle = color;
+                    ctx.lineWidth = 3;
+                    var x = e.pageX - $canvas.position().left; 
+                    var y = e.pageY - $canvas.position().top;
+                    ctx.lineTo(x,y);
+                    ctx.stroke();
+                    socket.emit('draw', {'eventType':e.type, 'strokeStyle' : color, 'lineWidth':3 , 'x' : x, 'y':y});         
+                }
+            })
+            .mouseup(function (e) {
+                drawMode = false;
+
+            });
+  
+  socket.on('clientDraw', function (data) {
+    clientDraw(data);
+  });
+
+  function clientDraw(data) {
+    var eventType = data.eventType;
+    ctx.strokeStyle = data.strokeStyle;
+    ctx.lineWidth = data.lineWidth;
+    var x = data.x;
+    var y = data.y;
+
+    if(eventType == 'mousedown') {
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+    ctx.lineTo(x,y);
+    ctx.stroke();
+    console.log(data);
+  }                 
+});
+
+</script>
+</head>
+
+<body>
+    <div id="dPallete"></div>
+  	<div id="canvasDiv"><canvas id="sketchPad" width="500px" height="500px" style="border: 2px solid gray"></canvas></div>
+    <div class="clearBoth"></div>
+</body>
+
+
+
+</html>
