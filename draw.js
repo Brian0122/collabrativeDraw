@@ -1,3 +1,5 @@
+console.log(process.env.PORT);
+console.log('!!!!!!');
 var io = require('socket.io').listen(process.env.PORT || 5000);
 // assuming io is the Socket.IO server object
 io.configure(function () { 
