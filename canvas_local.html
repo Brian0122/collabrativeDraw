@@ -97,22 +97,24 @@ $(function() {
 
   function clientDraw(data) {
     clients[data.id] = data;
-    if (clients[data.id]) {
+      if (clients[data.id]) {
       var eventType = data.eventType;
       ctx.strokeStyle = data.strokeStyle;
       ctx.lineWidth = data.lineWidth;
-      var x = clients[data.id].x;
-      var y = clients[data.id].y;
+       var prevX = clients[data.id].x;
+      var prevY = clients[data.id].y;
+      var x = data.x;
+      var y = data.y;
 
       if(eventType == 'mousedown') {
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(prevX, prevY);
       }
       ctx.lineTo(x,y);
       ctx.stroke();
       console.log(data);
     }
-  }                 
+  }                    
 });
 
 </script>
