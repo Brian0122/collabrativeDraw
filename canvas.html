@@ -3,11 +3,12 @@
 
 <head>
 	<script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
-  
+  <!--
   <script src="http://localhost:8000/socket.io/socket.io.js"></script>
-<!--
-<script src="http://draw-remote.herokuapp.com/socket.io/socket.io.js"></script>
--->
+  -->
+
+<script src="/socket.io/socket.io.js"></script>
+
   <style type="text/css">
   	#sketchPad {
   		width: 500px;
@@ -28,7 +29,7 @@
   </style>
 	
 	<script type="text/javascript">
-  var socket = io.connect('http://draw-remote.herokuapp.com/');  
+  var socket = io.connect('http://draw-remote.herokuapp.com');  
  
 $(function() {
    //產生不同顏色的div方格當作調色盤選項
