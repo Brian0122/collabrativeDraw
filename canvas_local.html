@@ -97,7 +97,7 @@ $(function() {
 
   function clientDraw(data) {
     clients[data.id] = data;
-      if (clients[data.id]) {
+    if (clients[data.id]) {
       var eventType = data.eventType;
       ctx.strokeStyle = data.strokeStyle;
       ctx.lineWidth = data.lineWidth;
